@@ -29,9 +29,8 @@ Route::prefix('oapi/v1')->group(function () {
    Route::post('/register', [AuthController::class, 'register']);
 });
 
-Route::prefix('api/v1')->group(function () {
-   Route::get('/test', function (Request $request) {
-      throw new ReportableException("TESTTEE ASDASD");
-      return response()->success([]);
+Route::prefix('api/v1')->middleware('auth:api')->group(function () {
+   Route::get('/me', function (Request $request) {
+      return response()->success($request->user());
    });
 });

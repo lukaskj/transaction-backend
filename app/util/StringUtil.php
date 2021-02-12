@@ -112,4 +112,8 @@ class StringUtil {
 
       return self::isValidPersonId($personCompanyId);
    }
+
+   public static function onlyNumbers(?string $str) {
+      return $str !== null ? @preg_replace('/[^0-9]/', '', $str) : null;
+   }
 }

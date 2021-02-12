@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
@@ -34,6 +35,10 @@ class Handler extends ExceptionHandler {
       $this->reportable(function (Throwable $e) {
          //
       });
+   }
+
+   protected function unauthenticated($request, AuthenticationException $exception) {
+      throw new ReportableException($exception->getMessage(), null, 401, null);
    }
 
    protected function convertExceptionToArray(Throwable $e) {

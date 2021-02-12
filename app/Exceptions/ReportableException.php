@@ -24,7 +24,7 @@ class ReportableException extends HttpException {
     * @param int            $code
     * @param Throwable|null $previous
     */
-   public function __construct($message = '', $data = null, $code = 500, Throwable $previous = null) {
+   public function __construct(string $message = '', $data = null, int $code = 500, Throwable $previous = null) {
       parent::__construct($code, $message, null, [], $code);
       $this->data = $data;
    }
@@ -34,6 +34,6 @@ class ReportableException extends HttpException {
    }
 
    public static function from(Throwable $e) {
-      return new ReportableException($e->getMessage(), $e, $e->getCode(), null);
+      return new ReportableException($e->getMessage(), null, $e->getCode() ?: 500, null);
    }
 }
