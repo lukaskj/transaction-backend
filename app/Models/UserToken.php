@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Traits\UuidModel;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,11 +9,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-class UserToken extends Model {
-   use HasFactory, SoftDeletes, UuidModel;
+class UserToken extends AbstractUuidModel {
+   use HasFactory, SoftDeletes;
 
    protected $table = "user_token";
-   
+
    protected $fillable = [
       "token",
       "expire_date",
@@ -31,7 +30,6 @@ class UserToken extends Model {
 
    protected static function boot() {
       parent::boot();
-      static::registerUuidCreatingEvent();
       static::creating(function (Model $model) {
          $model->setAttribute('expire_date', Carbon::now()->add(config('token.valid_amount'), config('token.valid_metric')));
          $model->setAttribute('user_agent', request()->server('HTTP_USER_AGENT'));

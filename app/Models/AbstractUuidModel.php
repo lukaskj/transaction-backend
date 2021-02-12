@@ -1,20 +1,19 @@
 <?php
 
-namespace App\Traits;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-trait UuidModel {
+class AbstractUuidModel extends Model {
+   protected $primaryKey = 'id';
+
+   public $incrementing = false;
+
+   protected $keyType = 'string';
+
    protected static function boot() {
       parent::boot();
-      static::registerUuidCreatingEvent();
-   }
-
-   /**
-    * Register Uuid generation event
-    */
-   private static function registerUuidCreatingEvent(): void {
       static::creating(function (Model $model) {
          $model->{$model->getKeyName()} = (string) Str::uuid();
       });
