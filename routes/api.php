@@ -20,8 +20,8 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::prefix('oapi/v1')->group(function () {
-   Route::get('/test', function (Request $request) {
-      return response()->success([]);
+   Route::get('/status', function (Request $request) {
+      return response()->success();
    });
 });
 
