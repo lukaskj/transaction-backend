@@ -15,7 +15,7 @@ class AuthService {
     * Login method
     * @throws Exception
     */
-   public function login(string $email, $password): string {
+   public function login(string $email, $password): UserToken {
       $user = User::where('email', $email)->first();
 
       if (is_null($user) || !Hash::check($password, $user->password)) {
