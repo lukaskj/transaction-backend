@@ -1,6 +1,7 @@
 <?php
 
 use App\Exceptions\ReportableException;
+use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +24,9 @@ Route::prefix('oapi/v1')->group(function () {
    Route::get('/status', function (Request $request) {
       return response()->success();
    });
+
+   Route::post('/login', [AuthController::class, 'login']);
+   Route::post('/register', [AuthController::class, 'register']);
 });
 
 Route::prefix('api/v1')->group(function () {
