@@ -1,0 +1,35 @@
+<?php
+
+namespace App\Exceptions;
+
+use Exception;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Throwable;
+
+/**
+ * Class ReportableException.
+ */
+class ReportableException extends HttpException {
+   /**
+    * @var
+    */
+   public $message;
+
+   private $data = null;
+
+   /**
+    * GeneralException constructor.
+    *
+    * @param string         $message
+    * @param int            $code
+    * @param Throwable|null $previous
+    */
+   public function __construct($message = '', $data = null, $code = 500, Throwable $previous = null) {
+      parent::__construct($code, $message, null, [], $code);
+      $this->data = $data;
+   }
+
+   public function getData() {
+      return $this->data;
+   }
+}

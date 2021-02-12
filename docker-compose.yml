@@ -1,0 +1,31 @@
+version: '3.7'
+services:
+  transaction-php-fpm:
+    image: lukaskj/laravel-docker:7.4-fpm
+    container_name: transaction-php-fpm
+    environment:
+      SERVICE_NAME: transaction-php-fpm
+      SERVICE_TAGS: dev
+    volumes:
+      - ./:/var/www
+      
+  transaction-nginx:
+    image: nginx:1.19-alpine
+    container_name: transaction-nginx
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+      # - ./docker/nginx/logs:/var/log/
+    depends_on:
+      - transaction-php-fpm
+  
+  transaction-mysql:
+    image: mysql/mysql-server:8.0.23
+    container_name: transaction-mysql
+    ports:
+      - "33306:3306"
