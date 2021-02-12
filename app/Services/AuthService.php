@@ -20,7 +20,7 @@ class AuthService {
       $user = User::where('email', $email)->first();
 
       if (is_null($user) || !Hash::check($password, $user->password)) {
-         throw new ReportableException("Wrong email or password.", null, 401);
+         throw new ReportableException("Invalid email or password.", null, 401);
       }
 
       $userToken = null;
@@ -36,7 +36,7 @@ class AuthService {
          throw $e;
       }
    }
-   
+
    /**
     * Register user
     * @return User

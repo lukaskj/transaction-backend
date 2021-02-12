@@ -45,7 +45,7 @@ class UsersTableSeeder extends Seeder {
          User::create([
             'email' => $client1Email,
             'person_company_id' => $faker->cpf(false),
-            'name' => $faker->company,
+            'name' => $faker->name,
             'email_verified_at' => now(),
             'password' => $passwordHash,
          ]);
@@ -56,7 +56,7 @@ class UsersTableSeeder extends Seeder {
          User::create([
             'email' => $client2Email,
             'person_company_id' => $faker->cpf(false),
-            'name' => $faker->company,
+            'name' => $faker->name,
             'email_verified_at' => now(),
             'password' => $passwordHash,
          ]);
