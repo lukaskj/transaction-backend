@@ -3,14 +3,13 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class UserToken extends AbstractUuidModel {
-   use HasFactory, SoftDeletes;
+   use SoftDeletes;
 
    protected $table = "user_token";
 
