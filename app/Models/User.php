@@ -3,9 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Autenticable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends AuthenticatableUuidModel {
+class User extends Autenticable {
    use HasFactory, Notifiable;
 
 

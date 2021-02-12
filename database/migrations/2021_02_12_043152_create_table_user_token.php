@@ -13,7 +13,8 @@ class CreateTableUserToken extends Migration {
    public function up() {
       Schema::create('user_token', function (Blueprint $table) {
          $table->uuid('id')->primary();
-         $table->uuid('user_id')->nullable(false);
+         // $table->uuid('user_id')->nullable(false);
+         $table->unsignedInteger('user_id')->nullable(false);
          $table->string('token', 255)->unique();
          $table->dateTime('expire_date')->nullable(false);
          $table->string('user_agent')->nullable();

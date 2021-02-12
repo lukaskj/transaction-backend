@@ -34,6 +34,6 @@ class ReportableException extends HttpException {
    }
 
    public static function from(Throwable $e) {
-      return new ReportableException($e->getMessage(), null, $e->getCode() ?: 500, null);
+      return new ReportableException($e->getMessage(), null, (int)$e->getCode() ?: 500, null);
    }
 }
