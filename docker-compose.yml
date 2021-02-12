@@ -6,6 +6,11 @@ services:
     environment:
       SERVICE_NAME: transaction-php-fpm
       SERVICE_TAGS: dev
+      DB_HOST: transaction-mysql
+      DB_DATABASE: transaction-backend
+      DB_PORT: 3306
+      DB_USERNAME: root
+      DB_PASSWORD: root
     volumes:
       - ./:/var/www
       
@@ -15,8 +20,8 @@ services:
     restart: unless-stopped
     tty: true
     ports:
-      - "80:80"
-      - "443:443"
+      - "8000:80"
+      - "8443:443"
     volumes:
       - ./:/var/www
       - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
@@ -27,5 +32,7 @@ services:
   transaction-mysql:
     image: mysql/mysql-server:8.0.23
     container_name: transaction-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
     ports:
-      - "33306:3306"
+      - "33307:3306"
