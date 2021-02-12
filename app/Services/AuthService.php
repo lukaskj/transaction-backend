@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Exceptions\ReportableException;
 use App\Models\User;
 use App\Models\UserToken;
+use App\Util\StringUtil;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -15,7 +16,7 @@ class AuthService {
     * Login method
     * @throws Exception
     */
-   public function login(string $email, $password): UserToken {
+   public function login(string $email, string $password): UserToken {
       $user = User::where('email', $email)->first();
 
       if (is_null($user) || !Hash::check($password, $user->password)) {
@@ -33,6 +34,30 @@ class AuthService {
       } catch (\Exception $e) {
          DB::rollBack();
          throw $e;
+      }
+   }
+   
+   /**
+    * Register user
+    * @return User
+    * @throws ReportableException
+    */
+   public function register(string $name, string $email, string $personCompanyId, string $password): User {
+      try {
+         if (!StringUtil::isValidPersonCompanyId($personCompanyId)) {
+            throw new ReportableException('Invalid person/company ID');
+         }
+
+         $user = User::create([
+            'name' => $name,
+            'email' => $email,
+            'person_company_id' => $personCompanyId,
+            'password' => Hash::make($password),
+         ]);
+
+         return $user;
+      } catch (\Throwable $th) {
+         throw ReportableException::from($th);
       }
    }
 }

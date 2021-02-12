@@ -32,4 +32,8 @@ class ReportableException extends HttpException {
    public function getData() {
       return $this->data;
    }
+
+   public static function from(Throwable $e) {
+      return new ReportableException($e->getMessage(), $e, $e->getCode(), null);
+   }
 }

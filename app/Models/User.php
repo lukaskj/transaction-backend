@@ -8,11 +8,15 @@ use Illuminate\Notifications\Notifiable;
 class User extends AuthenticatableUuidModel {
    use HasFactory, Notifiable;
 
-   /**
-    * The attributes that should be hidden for arrays.
-    *
-    * @var array
-    */
+
+   protected $fillable = [
+      'name',
+      'email',
+      'person_company_id',
+      'password',
+      'email_verified_at',
+   ];
+
    protected $hidden = [
       'password',
       'remember_token',
