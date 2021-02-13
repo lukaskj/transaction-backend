@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Exceptions\ReportableException;
 use App\Models\TransactionType;
 use App\Models\User;
 use App\Services\TransactionService;
@@ -45,7 +46,19 @@ class TransactionTest extends TestCase {
       $this->assertEquals(true, $canPay);
    }
 
-   public function testPayment() {
+   public function testInvalidTransactionPayment() {
+      $service = new TransactionService();
+      $user1 = User::query()
+         ->where('account_type', 1)
+         ->where('balance', '>', 0)->first();
+
+      $amount = 5000;
+
+      $this->expectException(ReportableException::class);
+      $service->newTransaction($user1, $user1, $amount);
+   }
+
+   public function testValidTransactionPayment() {
       $service = new TransactionService();
       $user1 = User::query()
          ->where('account_type', 1)
@@ -60,7 +73,7 @@ class TransactionTest extends TestCase {
 
       $amount = 5000;
 
-      $service->pay($user1, $user2, $amount);
+      $service->newTransaction($user1, $user2, $amount);
 
       $user1 = User::query()->find($user1->id);
       $user2 = User::query()->find($user2->id);

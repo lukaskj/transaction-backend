@@ -1,7 +1,7 @@
 <?php
 
-use App\Exceptions\ReportableException;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -33,4 +33,8 @@ Route::prefix('api/v1')->middleware('auth:api')->group(function () {
    Route::get('/me', function (Request $request) {
       return response()->success($request->user());
    });
+
+   Route::post('/transaction', [TransactionController::class, 'makeTransaction']);
 });
+
+Route::middleware('auth:api')->post('/transaction', [TransactionController::class, 'makeTransaction']);
