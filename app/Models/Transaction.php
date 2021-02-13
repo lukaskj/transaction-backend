@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Transaction extends Model {
    protected $fillable = [
@@ -28,6 +29,7 @@ class Transaction extends Model {
 
    /**
     * Set amount from float to int
+    * @return void
     */
    public function setAmountAttribute($value) {
       $this->attributes['amount'] = (int) ($value * 100);
@@ -35,17 +37,46 @@ class Transaction extends Model {
 
    /**
     * Get raw amount as integer
+    *
     * @return integer
     */
    public function getRawAmountAttribute() {
       return $this->attributes['amount'];
    }
 
-   public function user() {
+   /**
+    * Transaction owner user
+    * @return HasOne
+    */
+   public function user(): HasOne {
       return $this->hasOne(User::class);
    }
 
-   public function user_ref() {
+   /**
+    * Transaction user reference.
+    *
+    * Example: User A pays user B
+    *   - First transaction record:
+    *     - Credit for user A with user B as user_ref
+    *   - Second transaction record:
+    *     - Debit for user B with user A as user_ref
+    * @return HasOne
+    */
+   public function user_ref(): HasOne {
       return $this->hasOne(User::class, 'user_id_ref');
+   }
+
+   /**
+    * Transaction reference.
+    *
+    * Example: User A pays user B
+    *   - First transaction record:
+    *     - Credit for user A with user B as user_ref and transaction_ref is the second transaction ID
+    *   - Second transaction record:
+    *     - Debit for user B with user A as user_ref and transaction_ref null
+    * @return HasOne
+    */
+   public function transaction_ref() {
+      return $this->hasOne(Transaction::class, 'transaction_ref_id');
    }
 }
