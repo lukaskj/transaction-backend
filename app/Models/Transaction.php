@@ -18,11 +18,26 @@ class Transaction extends Model {
       return $this->hasOne(TransactionType::class);
    }
 
+   /**
+    * Get amount from float to int
+    * @return float
+    */
    public function getAmountAttribute($value) {
       return $value / 100;
    }
 
+   /**
+    * Set amount from float to int
+    */
    public function setAmountAttribute($value) {
-      $this->attributes['amount'] = $value * 100;
+      $this->attributes['amount'] = (int) ($value * 100);
+   }
+
+   /**
+    * Get raw amount as integer
+    * @return integer
+    */
+   public function getRawAmountAttribute() {
+      return $this->attributes['amount'];
    }
 }

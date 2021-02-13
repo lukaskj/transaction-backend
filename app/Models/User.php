@@ -9,7 +9,6 @@ use Illuminate\Notifications\Notifiable;
 class User extends Autenticable {
    use HasFactory, Notifiable;
 
-
    protected $fillable = [
       'name',
       'email',
@@ -23,7 +22,7 @@ class User extends Autenticable {
       'remember_token',
       'created_at',
       'updated_at',
-      'email_verified_at'
+      'email_verified_at',
    ];
 
    /**
@@ -49,5 +48,28 @@ class User extends Autenticable {
 
    public function isStore() {
       return strlen($this->person_company_id) == 14;
+   }
+
+   /**
+    * Get balance from float to int
+    * @return float
+    */
+   public function getBalanceAttribute($value) {
+      return $value / 100;
+   }
+
+   /**
+    * Set balance from float to int
+    */
+   public function setBalanceAttribute($value) {
+      $this->attributes['balance'] = (int) ($value * 100);
+   }
+
+   /**
+    * Get raw balance as integer
+    * @return integer
+    */
+   public function getRawBalanceAttribute() {
+      return $this->attributes['balance'];
    }
 }

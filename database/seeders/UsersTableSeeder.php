@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Services\AuthService;
 use Faker\Factory;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Artisan;
 
 class UsersTableSeeder extends Seeder {
    /**
@@ -19,24 +20,20 @@ class UsersTableSeeder extends Seeder {
 
       $password = '123456';
 
-      $store1Email = 'loja1@lojas.com';
-      if (!User::query()->where('email', $store1Email)->exists()) {
-         $authService->register($faker->company, $store1Email, $faker->cnpj(false), $password);
-      }
+      $emails = [
+         'loja1@lojas.com',
+         'loja2@lojas.com',
+         'cliente1@clientes.com',
+         'cliente2@clientes.com',
+      ];
 
-      $store2Email = 'loja2@lojas.com';
-      if (!User::query()->where('email', $store2Email)->exists()) {
-         $authService->register($faker->company, $store2Email, $faker->cnpj(false), $password);
-      }
-
-      $client1Email = 'cliente1@clientes.com';
-      if (!User::query()->where('email', $client1Email)->exists()) {
-         $authService->register($faker->name, $client1Email, $faker->cpf(false), $password);
-      }
-
-      $client2Email = 'cliente2@clientes.com';
-      if (!User::query()->where('email', $client2Email)->exists()) {
-         $authService->register($faker->name, $client2Email, $faker->cpf(false), $password);
+      foreach ($emails as $email) {
+         if (!User::query()->where('email', $email)->exists()) {
+            $name = strpos($email, 'loja') !== false ? $faker->company : $faker->name;
+            $personCompanyId = strpos($email, 'loja') !== false ? $faker->cnpj(false) : $faker->cpf(false);
+            $user = $authService->register($name, $email, $personCompanyId, $password);
+            Artisan::call('user:balance', ['userId' => $user->id, 'amount' => 300]);
+         }
       }
    }
 }
