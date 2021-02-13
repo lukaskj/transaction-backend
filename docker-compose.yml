@@ -7,10 +7,10 @@ services:
       SERVICE_NAME: transaction-app
       SERVICE_TAGS: dev
       DB_HOST: transaction-mysql
-      DB_DATABASE: transaction-backend
+      DB_DATABASE: transactions
       DB_PORT: 3306
-      DB_USERNAME: root
-      DB_PASSWORD: root
+      DB_USERNAME: user
+      DB_PASSWORD: user
     volumes:
       - ./:/var/www
     networks:
@@ -38,6 +38,9 @@ services:
     container_name: transaction-mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: transactions
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user
     ports:
       - "33307:3306"
     networks:
