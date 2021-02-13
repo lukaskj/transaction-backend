@@ -13,22 +13,33 @@ class TransactionService {
     * @param int|string|User $payer
     * @param int|string|User $payee
     * @param int $amount Amount to pay
-    * @return Transaction
+    * @return Transaction First transaction record with 
     * @throws Exception
     */
-   public function pay($payer, $payee, int $amount) {
+   public function newTransaction($payer, $payee, float $amount): Transaction {
       if (!($payer instanceof User)) {
          $payer = User::query()->find($payer);
+         if ($payer === null) {
+            throw new ReportableException("Payer not found.");
+         }
+
       }
 
       if (!($payee instanceof User)) {
          $payee = User::query()->find($payee);
+         if ($payer === null) {
+            throw new ReportableException("Payee not found.");
+         }
+      }
+
+      if ($payee->id === $payer->id) {
+         throw new ReportableException("Payer must not be the same as the payee");
       }
 
       $this->userCanPay($payer, $amount);
 
-      DB::transaction(function () use ($payer, $payee, $amount) {
-         Transaction::query()->create([
+      return DB::transaction(function () use ($payer, $payee, $amount) {
+         $payeeCreditTransaction = Transaction::query()->create([
             'transaction_type_id' => 1,
             'amount' => $amount,
             'description' => 'Payment received',
@@ -39,7 +50,7 @@ class TransactionService {
          $payee->balance += $amount;
          $payee->update();
 
-         Transaction::query()->create([
+         $payerDebitTransaction = Transaction::query()->create([
             'transaction_type_id' => 2,
             'amount' => $amount,
             'description' => 'Payment made',
@@ -47,10 +58,15 @@ class TransactionService {
             'user_id_ref' => $payee->id,
          ]);
 
+         $payeeCreditTransaction->transaction_id_ref = $payerDebitTransaction->id;
+         $payeeCreditTransaction->update();
+
          $payer->balance -= $amount;
          $payer->update();
-      });
 
+         return $payeeCreditTransaction;
+      });
+      return null;
    }
 
    /**
