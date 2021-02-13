@@ -13,6 +13,7 @@ class User extends Autenticable {
       'name',
       'email',
       'person_company_id',
+      'account_type',
       'password',
       'email_verified_at',
    ];

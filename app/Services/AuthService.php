@@ -51,6 +51,7 @@ class AuthService {
          $user = User::create([
             'name' => $name,
             'email' => $email,
+            'account_type' => strlen($personCompanyId) === 11 ? 1 : 2,
             'person_company_id' => $personCompanyId,
             'password' => Hash::make($password),
          ]);
