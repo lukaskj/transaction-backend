@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Traits\DateFormat;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class AbstractUuidModel extends Model {
+   use DateFormat;
    protected $primaryKey = 'id';
 
    public $incrementing = false;

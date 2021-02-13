@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Hash;
@@ -25,6 +26,10 @@ class UserToken extends AbstractUuidModel {
       "ip",
       "user_agent",
       'deleted_at',
+   ];
+
+   protected $casts = [
+      "expire_date" => "datetime"
    ];
 
    protected static function boot() {
