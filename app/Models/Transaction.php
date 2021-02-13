@@ -40,4 +40,12 @@ class Transaction extends Model {
    public function getRawAmountAttribute() {
       return $this->attributes['amount'];
    }
+
+   public function user() {
+      return $this->hasOne(User::class);
+   }
+
+   public function user_ref() {
+      return $this->hasOne(User::class, 'user_id_ref');
+   }
 }

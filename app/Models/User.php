@@ -33,6 +33,7 @@ class User extends Autenticable {
     */
    protected $casts = [
       'email_verified_at' => 'datetime',
+      'balance' => "integer",
    ];
 
    public function getIsClientAttribute($value) {
@@ -51,26 +52,4 @@ class User extends Autenticable {
       return strlen($this->person_company_id) == 14;
    }
 
-   /**
-    * Get balance from float to int
-    * @return float
-    */
-   public function getBalanceAttribute($value) {
-      return $value / 100;
-   }
-
-   /**
-    * Set balance from float to int
-    */
-   public function setBalanceAttribute($value) {
-      $this->attributes['balance'] = (int) ($value * 100);
-   }
-
-   /**
-    * Get raw balance as integer
-    * @return integer
-    */
-   public function getRawBalanceAttribute() {
-      return $this->attributes['balance'];
-   }
 }
