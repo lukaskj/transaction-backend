@@ -1,10 +1,10 @@
 version: '3.7'
 services:
-  transaction-php-fpm:
+  transaction-app:
     image: lukaskj/laravel-docker:7.4-fpm
-    container_name: transaction-php-fpm
+    container_name: transaction-app
     environment:
-      SERVICE_NAME: transaction-php-fpm
+      SERVICE_NAME: transaction-app
       SERVICE_TAGS: dev
       DB_HOST: transaction-mysql
       DB_DATABASE: transaction-backend
@@ -13,6 +13,8 @@ services:
       DB_PASSWORD: root
     volumes:
       - ./:/var/www
+    networks:
+      - transaction-app
       
   transaction-nginx:
     image: nginx:1.19-alpine
@@ -27,7 +29,9 @@ services:
       - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
       # - ./docker/nginx/logs:/var/log/
     depends_on:
-      - transaction-php-fpm
+      - transaction-app
+    networks:
+      - transaction-app
   
   transaction-mysql:
     image: mysql/mysql-server:8.0.23
@@ -36,3 +40,5 @@ services:
       MYSQL_ROOT_PASSWORD: root
     ports:
       - "33307:3306"
+    networks:
+      - transaction-app
