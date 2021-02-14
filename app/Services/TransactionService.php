@@ -15,17 +15,19 @@ class TransactionService {
     * @param float $amount Transaction amount
     * @param string $description Transaction Description
     * @param int|string $userId Transaction owner
-    * @param int|string $userIdRef Transaction referenced
+    * @param int|string $userIdRef Transaction referenced user
+    * @param int|string $transactionIdRef Transaction referenced
     *
     * @return Transaction
     */
-   public function addTransaction(int $typeId, float $amount, string $description, $userId, $userIdRef = null): Transaction {
+   public function addTransaction(int $typeId, float $amount, string $description, $userId, $userIdRef = null, $transactionIdRef = null): Transaction {
       return Transaction::query()->create([
          'transaction_type_id' => $typeId,
          'amount' => $amount,
          'description' => $description,
          'user_id' => $userId,
          'user_id_ref' => $userIdRef,
+         'transaction_id_ref' => $transactionIdRef
       ]);
    }
 
@@ -60,17 +62,6 @@ class TransactionService {
       $this->userCanPay($payer, $amount);
 
       return DB::transaction(function () use ($payer, $payee, $amount) {
-         $payeeCreditTransaction = $this->addTransaction(
-            Transaction::CREDIT,
-            $amount,
-            'Payment received',
-            $payee->id,
-            $payer->id
-         );
-
-         $payee->balance += $amount;
-         $payee->update();
-
          $payerDebitTransaction = $this->addTransaction(
             Transaction::DEBIT,
             $amount,
@@ -79,13 +70,22 @@ class TransactionService {
             $payee->id
          );
 
-         $payeeCreditTransaction->transaction_id_ref = $payerDebitTransaction->id;
-         $payeeCreditTransaction->update();
-
          $payer->balance -= $amount;
          $payer->update();
+         
+         $payeeCreditTransaction = $this->addTransaction(
+            Transaction::CREDIT,
+            $amount,
+            'Payment received',
+            $payee->id,
+            $payer->id,
+            $payerDebitTransaction->id
+         );
 
-         return $payeeCreditTransaction;
+         $payee->balance += $amount;
+         $payee->update();
+
+         return $payerDebitTransaction;
       });
       return null;
    }
@@ -94,10 +94,10 @@ class TransactionService {
     * Checks if user can pay
     *
     * @param User $payer
-    * @param int $amount Amount to pay
+    * @param float $amount Amount to pay
     * @param bool $throwExceptions Throw exceptions. 'false' only returns boolean.
     */
-   public function userCanPay(User $payer, int $amount, bool $throwExceptions = true): bool {
+   public function userCanPay(User $payer, float $amount, bool $throwExceptions = true): bool {
       if ($payer->isStore()) {
          if ($throwExceptions) {
             throw new ReportableException("Store cannot make payments.", null, 422);
@@ -108,7 +108,7 @@ class TransactionService {
 
       if ($payer->balance < $amount) {
          if ($throwExceptions) {
-            throw new ReportableException("Insufficient funds.", ['amountToPay' => $amount / 100, 422]);
+            throw new ReportableException("Insufficient funds.", ["amountToPay" => $amount], 422);
          } else {
             return false;
          }

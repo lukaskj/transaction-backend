@@ -34,7 +34,11 @@ Route::prefix('api/v1')->middleware('auth:api')->group(function () {
       return response()->success($request->user());
    });
 
+   Route::get('/transaction', [TransactionController::class, 'getTransactionList']);
    Route::post('/transaction', [TransactionController::class, 'makeTransaction']);
 });
 
-Route::middleware('auth:api')->post('/transaction', [TransactionController::class, 'makeTransaction']);
+Route::middleware('auth:api')->group(function () {
+   Route::get('/transaction', [TransactionController::class, 'getTransactionList']);
+   Route::post('/transaction', [TransactionController::class, 'makeTransaction']);
+});

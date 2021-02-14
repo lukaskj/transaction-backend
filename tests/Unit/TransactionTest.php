@@ -52,7 +52,7 @@ class TransactionTest extends TestCase {
          ->where('account_type', 1)
          ->where('balance', '>', 0)->first();
 
-      $amount = 5000;
+      $amount = 5073;
 
       $this->expectException(ReportableException::class);
       $service->newPayment($user1, $user1, $amount);
@@ -71,7 +71,7 @@ class TransactionTest extends TestCase {
          ->where('balance', '>', 0)->first();
       $user2Balance = $user2->balance;
 
-      $amount = 50;
+      $amount = 56;
 
       $service->newPayment($user1, $user2, $amount);
 
@@ -88,7 +88,7 @@ class TransactionTest extends TestCase {
          ->where('account_type', 1)
          ->where('balance', '>', 0)->first();
       $userInitialBalance = $user->balance;
-      $amount = 150.50;
+      $amount = 150.71;
       $transaction = $service->addFounds($user->id, $amount);
       $this->assertNotNull($transaction);
       $user->refresh();

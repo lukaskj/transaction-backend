@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\DateFormat;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Transaction extends Model {
+   use DateFormat;
+   
    public const CREDIT = 1;
    public const DEBIT = 2;
 
@@ -80,7 +83,14 @@ class Transaction extends Model {
     *     - Debit for user B with user A as user_ref and transaction_ref null
     * @return HasOne
     */
-   public function transaction_ref() {
+   public function transaction_ref(): HasOne {
       return $this->hasOne(Transaction::class, 'transaction_ref_id');
+   }
+
+   /**
+    * Get transactions from user
+    */
+   public function scopeFromUser($query, $userId) {
+      return $query->where('user_id', $userId);
    }
 }
