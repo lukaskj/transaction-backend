@@ -5,5 +5,3 @@ ENV WORKDIR /var/www
 WORKDIR /var/www
 
 ADD ./ /var/www/
-
-ENTRYPOINT ["/var/www/docker/scripts/start-app.sh"]
