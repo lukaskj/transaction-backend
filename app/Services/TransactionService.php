@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Exceptions\ReportableException;
+use App\Jobs\PaymentTransactionJob;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -25,7 +26,7 @@ class TransactionService {
     *
     * @return Transaction
     */
-   public function addTransaction(int $typeId, float $amount, string $description, $userId, $userIdRef = null, $transactionIdRef = null): Transaction {
+   public function addTransaction(int $typeId, float $amount, string $description, $userId, $userIdRef = null, $transactionIdRef = null, int $status = Transaction::STATUS_PENDING): Transaction {
       return Transaction::query()->create([
          'transaction_type_id' => $typeId,
          'amount' => $amount,
@@ -33,6 +34,7 @@ class TransactionService {
          'user_id' => $userId,
          'user_id_ref' => $userIdRef,
          'transaction_id_ref' => $transactionIdRef,
+         'status' => $status ?? Transaction::STATUS_PENDING,
       ]);
    }
 
@@ -57,16 +59,7 @@ class TransactionService {
 
          $this->userService->updateBalance($payer->id, $payer->balance -= $amount);
 
-         $payeeCreditTransaction = $this->addTransaction(
-            Transaction::CREDIT,
-            $amount,
-            'Payment received',
-            $payee->id,
-            $payer->id,
-            $payerDebitTransaction->id
-         );
-
-         $this->userService->updateBalance($payee->id, $payee->balance += $amount);
+         PaymentTransactionJob::dispatch($payerDebitTransaction);
 
          return $payerDebitTransaction;
       });
@@ -149,14 +142,17 @@ class TransactionService {
          if ($user->balance + $amount < 0) {
             throw new ReportableException("Insuficient founds.");
          }
-         
+
          $this->userService->updateBalance($user->id, $user->balance += $amount);
 
          return $this->addTransaction(
             $amount > 0 ? Transaction::CREDIT : Transaction::DEBIT,
             abs($amount),
             'Founds added',
-            $user->id
+            $user->id,
+            null,
+            null,
+            Transaction::STATUS_CONFIRMED
          );
       });
    }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\DateFormat;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Transaction extends Model {
@@ -11,6 +12,10 @@ class Transaction extends Model {
    
    public const CREDIT = 1;
    public const DEBIT = 2;
+
+   public const STATUS_ERROR = -1;
+   public const STATUS_PENDING = 0;
+   public const STATUS_CONFIRMED = 1;
 
    protected $fillable = [
       'transaction_type_id',
@@ -53,10 +58,10 @@ class Transaction extends Model {
 
    /**
     * Transaction owner user
-    * @return HasOne
+    * @return BelongsTo
     */
-   public function user(): HasOne {
-      return $this->hasOne(User::class);
+   public function user(): BelongsTo {
+      return $this->belongsTo(User::class);
    }
 
    /**
@@ -67,10 +72,10 @@ class Transaction extends Model {
     *     - Credit for user A with user B as user_ref
     *   - Second transaction record:
     *     - Debit for user B with user A as user_ref
-    * @return HasOne
+    * @return BelongsTo
     */
-   public function user_ref(): HasOne {
-      return $this->hasOne(User::class, 'user_id_ref');
+   public function user_ref(): BelongsTo {
+      return $this->belongsTo(User::class, 'user_id_ref');
    }
 
    /**
@@ -81,10 +86,10 @@ class Transaction extends Model {
     *     - Credit for user A with user B as user_ref and transaction_ref is the second transaction ID
     *   - Second transaction record:
     *     - Debit for user B with user A as user_ref and transaction_ref null
-    * @return HasOne
+    * @return BelongsTo
     */
-   public function transaction_ref(): HasOne {
-      return $this->hasOne(Transaction::class, 'transaction_ref_id');
+   public function transaction_ref(): BelongsTo {
+      return $this->belongsTo(Transaction::class, 'transaction_ref_id');
    }
 
    /**
