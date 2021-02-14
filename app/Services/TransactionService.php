@@ -8,6 +8,11 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class TransactionService {
+   private UserService $userService;
+
+   public function __construct() {
+      $this->userService = new UserService;
+   }
    /**
     * Add transaction record
     *
@@ -50,8 +55,7 @@ class TransactionService {
             $payee->id
          );
 
-         $payer->balance -= $amount;
-         $payer->update();
+         $this->userService->updateBalance($payer->id, $payer->balance -= $amount);
 
          $payeeCreditTransaction = $this->addTransaction(
             Transaction::CREDIT,
@@ -62,8 +66,7 @@ class TransactionService {
             $payerDebitTransaction->id
          );
 
-         $payee->balance += $amount;
-         $payee->update();
+         $this->userService->updateBalance($payee->id, $payee->balance += $amount);
 
          return $payerDebitTransaction;
       });
@@ -146,9 +149,9 @@ class TransactionService {
          if ($user->balance + $amount < 0) {
             throw new ReportableException("Insuficient founds.");
          }
+         
+         $this->userService->updateBalance($user->id, $user->balance += $amount);
 
-         $user->balance += $amount;
-         $user->update();
          return $this->addTransaction(
             $amount > 0 ? Transaction::CREDIT : Transaction::DEBIT,
             abs($amount),
