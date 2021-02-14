@@ -1,20 +1,44 @@
 version: '3.7'
 services:
+  # Accessing source code mounted on windows filesystem (/mnt) is slow on WSL2
+  # Later build an image without mounting this way
   transaction-app:
     image: lukaskj/laravel-docker:7.4-fpm
     container_name: transaction-app
     environment:
-      SERVICE_NAME: transaction-app
-      SERVICE_TAGS: dev
+      APP_NAME: TransactionBackend
+      APP_ENV: production
+      APP_KEY: base64:JDKwEXsMHMr3JL15GpNEOKKlX5SlIwxOaSA8UmBPtoE=
+      APP_DEBUG: 'false'
+      APP_URL: http://transaction-app
+      # Database
+      DB_CONNECTION: mysql
       DB_HOST: transaction-mysql
       DB_DATABASE: transactions
       DB_PORT: 3306
       DB_USERNAME: user
       DB_PASSWORD: user
+      # redis
+      REDIS_HOST: transaction-redis
+      REDIS_PASSWORD: e77cd03bbd00bb6f87cbb593e565bcaace9fc9970210c6e747eadeab90c7950d
+      REDIS_PORT: 6379
+
+      CACHE_DRIVER: redis
+      QUEUE_CONNECTION: redis
+      SESSION_DRIVER: redis
+      # Other
+      LOG_CHANNEL: stack
+      LOG_LEVEL: debug
+      TOKEN_VALID_AMOUNT: 10
+      TOKEN_VALID_METRIC: days
+      SERVICE_NAME: transaction-app
+      SERVICE_TAGS: dev
     volumes:
       - ./:/var/www
-    networks:
-      - transaction-app
+    command: sh -c "php artisan migrate --seed --force && php-fpm"
+    depends_on:
+      - transaction-mysql
+      - transaction-redis
       
   transaction-nginx:
     image: nginx:1.19-alpine
@@ -30,8 +54,6 @@ services:
       # - ./docker/nginx/logs:/var/log/
     depends_on:
       - transaction-app
-    networks:
-      - transaction-app
   
   transaction-mysql:
     image: mysql/mysql-server:8.0.23
@@ -43,5 +65,12 @@ services:
       MYSQL_PASSWORD: user
     ports:
       - "33307:3306"
-    networks:
-      - transaction-app
+
+  transaction-redis:
+    image: redis:6.0.10-alpine
+    container_name: transaction-redis
+    environment:
+      AUTH: test
+    ports:
+      - "63790:6379"
+    command: redis-server --requirepass e77cd03bbd00bb6f87cbb593e565bcaace9fc9970210c6e747eadeab90c7950d
