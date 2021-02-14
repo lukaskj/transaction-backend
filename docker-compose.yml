@@ -16,8 +16,8 @@ services:
       DB_HOST: transaction-mysql
       DB_DATABASE: transactions
       DB_PORT: 3306
-      DB_USERNAME: user
-      DB_PASSWORD: user
+      DB_USERNAME: root
+      DB_PASSWORD: b593e565bcaace9fc9970210
       # redis
       REDIS_HOST: transaction-redis
       REDIS_PASSWORD: e77cd03bbd00bb6f87cbb593e565bcaace9fc9970210c6e747eadeab90c7950d
@@ -35,7 +35,7 @@ services:
       SERVICE_TAGS: dev
     volumes:
       - ./:/var/www
-    command: sh -c "php artisan migrate --seed --force && php-fpm"
+    command: sh -c "/opt/wait-for-it.sh transaction-mysql:3306 -t 60 -- php artisan migrate --seed --force && php-fpm"
     depends_on:
       - transaction-mysql
       - transaction-redis
@@ -59,7 +59,8 @@ services:
     image: mysql/mysql-server:8.0.23
     container_name: transaction-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_ROOT_PASSWORD: b593e565bcaace9fc9970210
       MYSQL_DATABASE: transactions
       MYSQL_USER: user
       MYSQL_PASSWORD: user
