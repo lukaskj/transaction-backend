@@ -3,9 +3,7 @@ services:
   # Accessing source code mounted on windows filesystem (/mnt) is slow on WSL2
   # Later build an image without mounting this way
   transaction-app:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
+    image: lukaskj/laravel-docker:7.4-fpm
     container_name: transaction-app
     environment:
       APP_NAME: TransactionBackend
@@ -36,8 +34,8 @@ services:
       SERVICE_NAME: transaction-app
       SERVICE_TAGS: dev
     volumes:
-      - ./:/opt/www
-    # command: sh -c "/opt/wait-for-it.sh transaction-mysql:3306 -t 60 -- php artisan migrate --seed --force && php-fpm"
+      - ./:/var/www
+    command: sh -c "/opt/wait-for-it.sh transaction-mysql:3306 -t 60 -- php artisan migrate --seed --force && php-fpm"
     depends_on:
       - transaction-mysql
       - transaction-redis
