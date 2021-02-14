@@ -32,7 +32,7 @@ class TransactionService {
    }
 
    /**
-    * Add payment transaction
+    * Add payment transaction (synchronous)
     * @param int|string|User $payer
     * @param int|string|User $payee
     * @param int $amount Amount to pay
@@ -80,7 +80,7 @@ class TransactionService {
     * @return boolean
     * @throws Exception
     */
-   public function validateTransaction($payer, $payee, float $amount): bool {
+   public function validateTransaction(&$payer, &$payee, float $amount): bool {
       if (!($payer instanceof User)) {
          $payer = User::query()->find($payer);
          if ($payer === null) {

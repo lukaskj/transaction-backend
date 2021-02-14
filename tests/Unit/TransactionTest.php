@@ -55,7 +55,7 @@ class TransactionTest extends TestCase {
       $amount = 5073;
 
       $this->expectException(ReportableException::class);
-      $service->newPayment($user1, $user1, $amount);
+      $service->newPayment($user1->id, $user1->id, $amount);
    }
 
    public function testValidTransactionPayment() {
@@ -73,7 +73,7 @@ class TransactionTest extends TestCase {
 
       $amount = 56;
 
-      $service->newPayment($user1, $user2, $amount);
+      $service->newPayment($user1->id, $user2->id, $amount);
 
       $user1 = User::query()->find($user1->id);
       $user2 = User::query()->find($user2->id);
