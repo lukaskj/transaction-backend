@@ -19,7 +19,7 @@ class CreateTransactionsTable extends Migration {
          $table->unsignedBigInteger('user_id_ref')->nullable(true)->comment('Transaction \'to\' user.');
          $table->string('description', 500)->nullable()->comment('Transaction description');
          $table->unsignedBigInteger('transaction_id_ref')->nullable(true)->comment('Transaction reference ID.');
-         $table->unsignedTinyInteger('status')->default(1)->comment('Transaction status');
+         $table->tinyInteger('status')->default(0)->comment('Transaction status');
 
          $table->foreign('transaction_type_id')->references('id')->on('transaction_types');
          $table->foreign('user_id')->references('id')->on('users');

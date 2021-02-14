@@ -27,7 +27,7 @@ class TransactionService {
          'description' => $description,
          'user_id' => $userId,
          'user_id_ref' => $userIdRef,
-         'transaction_id_ref' => $transactionIdRef
+         'transaction_id_ref' => $transactionIdRef,
       ]);
    }
 
@@ -40,27 +40,7 @@ class TransactionService {
     * @throws Exception
     */
    public function newPayment($payer, $payee, float $amount): Transaction {
-      if (!($payer instanceof User)) {
-         $payer = User::query()->find($payer);
-         if ($payer === null) {
-            throw new ReportableException("Payer not found.");
-         }
-
-      }
-
-      if (!($payee instanceof User)) {
-         $payee = User::query()->find($payee);
-         if ($payer === null) {
-            throw new ReportableException("Payee not found.");
-         }
-      }
-
-      if ($payee->id === $payer->id) {
-         throw new ReportableException("Payer must not be the same as the payee");
-      }
-
-      $this->userCanPay($payer, $amount);
-
+      $this->validateTransaction($payer, $payee, $amount);
       return DB::transaction(function () use ($payer, $payee, $amount) {
          $payerDebitTransaction = $this->addTransaction(
             Transaction::DEBIT,
@@ -72,7 +52,7 @@ class TransactionService {
 
          $payer->balance -= $amount;
          $payer->update();
-         
+
          $payeeCreditTransaction = $this->addTransaction(
             Transaction::CREDIT,
             $amount,
@@ -87,7 +67,39 @@ class TransactionService {
 
          return $payerDebitTransaction;
       });
+
       return null;
+   }
+
+   /**
+    * Validate transaction
+
+    * @param int|string|User $payer
+    * @param int|string|User $payee
+    * @param int $amount Amount to pay
+    * @return boolean
+    * @throws Exception
+    */
+   public function validateTransaction($payer, $payee, float $amount): bool {
+      if (!($payer instanceof User)) {
+         $payer = User::query()->find($payer);
+         if ($payer === null) {
+            throw new ReportableException("Payer not found.");
+         }
+      }
+
+      if (!($payee instanceof User)) {
+         $payee = User::query()->find($payee);
+         if ($payer === null) {
+            throw new ReportableException("Payee not found.");
+         }
+      }
+
+      if ($payee->id === $payer->id) {
+         throw new ReportableException("Payer must not be the same as the payee");
+      }
+
+      return $this->userCanPay($payer, $amount);
    }
 
    /**
