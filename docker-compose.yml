@@ -17,7 +17,7 @@ services:
       DB_DATABASE: transactions
       DB_PORT: 3306
       DB_USERNAME: root
-      DB_PASSWORD: b593e565bcaace9fc9970210
+      DB_PASSWORD: 9ca80cbce084b692e0b78adf4dc3f6b8883221d1fd59c86162c6f97bf4b75b8e
       # redis
       REDIS_HOST: transaction-redis
       REDIS_PASSWORD: e77cd03bbd00bb6f87cbb593e565bcaace9fc9970210c6e747eadeab90c7950d
@@ -60,7 +60,7 @@ services:
     container_name: transaction-mysql
     environment:
       MYSQL_ROOT_HOST: '%'
-      MYSQL_ROOT_PASSWORD: b593e565bcaace9fc9970210
+      MYSQL_ROOT_PASSWORD: 9ca80cbce084b692e0b78adf4dc3f6b8883221d1fd59c86162c6f97bf4b75b8e
       MYSQL_DATABASE: transactions
       MYSQL_USER: user
       MYSQL_PASSWORD: user
