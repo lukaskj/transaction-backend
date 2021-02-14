@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Rules\PersonCompanyIdRule;
-use App\Util\StringUtil;
+use App\Utils\StringUtil;
 
 class RegisterRequest extends AbstractRequest {
    public function authorize() {

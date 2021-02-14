@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Exceptions\ReportableException;
 use App\Models\User;
 use App\Models\UserToken;
-use App\Util\StringUtil;
+use App\Utils\StringUtil;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;

@@ -2,7 +2,7 @@
 
 namespace App\Rules;
 
-use App\Util\StringUtil;
+use App\Utils\StringUtil;
 use Illuminate\Contracts\Validation\Rule;
 
 class PersonCompanyIdRule implements Rule {
