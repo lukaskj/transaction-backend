@@ -55,7 +55,7 @@ class TransactionTest extends TestCase {
       $amount = 5000;
 
       $this->expectException(ReportableException::class);
-      $service->newTransaction($user1, $user1, $amount);
+      $service->newPayment($user1, $user1, $amount);
    }
 
    public function testValidTransactionPayment() {
@@ -71,14 +71,27 @@ class TransactionTest extends TestCase {
          ->where('balance', '>', 0)->first();
       $user2Balance = $user2->balance;
 
-      $amount = 5000;
+      $amount = 50;
 
-      $service->newTransaction($user1, $user2, $amount);
+      $service->newPayment($user1, $user2, $amount);
 
       $user1 = User::query()->find($user1->id);
       $user2 = User::query()->find($user2->id);
 
       $this->assertEquals($user1Balance - $amount, $user1->balance);
       $this->assertEquals($user2Balance + $amount, $user2->balance);
+   }
+
+   public function testAddFounds() {
+      $service = new TransactionService();
+      $user = User::query()
+         ->where('account_type', 1)
+         ->where('balance', '>', 0)->first();
+      $userInitialBalance = $user->balance;
+      $amount = 150.50;
+      $transaction = $service->addFounds($user->id, $amount);
+      $this->assertNotNull($transaction);
+      $user->refresh();
+      $this->assertEquals($userInitialBalance + $amount, $user->balance);
    }
 }

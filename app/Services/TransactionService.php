@@ -9,14 +9,35 @@ use Illuminate\Support\Facades\DB;
 
 class TransactionService {
    /**
+    * Add transaction record
+    *
+    * @param int $typeId Transaction type id
+    * @param float $amount Transaction amount
+    * @param string $description Transaction Description
+    * @param int|string $userId Transaction owner
+    * @param int|string $userIdRef Transaction referenced
+    *
+    * @return Transaction
+    */
+   public function addTransaction(int $typeId, float $amount, string $description, $userId, $userIdRef = null): Transaction {
+      return Transaction::query()->create([
+         'transaction_type_id' => $typeId,
+         'amount' => $amount,
+         'description' => $description,
+         'user_id' => $userId,
+         'user_id_ref' => $userIdRef,
+      ]);
+   }
+
+   /**
     * Add payment transaction
     * @param int|string|User $payer
     * @param int|string|User $payee
     * @param int $amount Amount to pay
-    * @return Transaction First transaction record with 
+    * @return Transaction First transaction record with
     * @throws Exception
     */
-   public function newTransaction($payer, $payee, float $amount): Transaction {
+   public function newPayment($payer, $payee, float $amount): Transaction {
       if (!($payer instanceof User)) {
          $payer = User::query()->find($payer);
          if ($payer === null) {
@@ -39,24 +60,24 @@ class TransactionService {
       $this->userCanPay($payer, $amount);
 
       return DB::transaction(function () use ($payer, $payee, $amount) {
-         $payeeCreditTransaction = Transaction::query()->create([
-            'transaction_type_id' => 1,
-            'amount' => $amount,
-            'description' => 'Payment received',
-            'user_id' => $payee->id,
-            'user_id_ref' => $payer->id,
-         ]);
+         $payeeCreditTransaction = $this->addTransaction(
+            Transaction::CREDIT,
+            $amount,
+            'Payment received',
+            $payee->id,
+            $payer->id
+         );
 
          $payee->balance += $amount;
          $payee->update();
 
-         $payerDebitTransaction = Transaction::query()->create([
-            'transaction_type_id' => 2,
-            'amount' => $amount,
-            'description' => 'Payment made',
-            'user_id' => $payer->id,
-            'user_id_ref' => $payee->id,
-         ]);
+         $payerDebitTransaction = $this->addTransaction(
+            Transaction::DEBIT,
+            $amount,
+            'Payment made',
+            $payer->id,
+            $payee->id
+         );
 
          $payeeCreditTransaction->transaction_id_ref = $payerDebitTransaction->id;
          $payeeCreditTransaction->update();
@@ -94,5 +115,34 @@ class TransactionService {
       }
 
       return true;
+   }
+
+   /**
+    * Add user balance with transaction record
+    * @param string|int $userId User ID to add founds to
+    * @param float $amount Amount to be added. Can be negative and a debit will be made.
+    * @return Transaction Transaction record
+    * @throws Exception
+    */
+   public function addFounds($userId, float $amount): Transaction {
+      $user = User::find($userId);
+      if ($user === null) {
+         throw new ReportableException("User not found");
+      }
+
+      return DB::transaction(function () use ($user, $amount) {
+         if ($user->balance + $amount < 0) {
+            throw new ReportableException("Insuficient founds.");
+         }
+
+         $user->balance += $amount;
+         $user->update();
+         return $this->addTransaction(
+            $amount > 0 ? Transaction::CREDIT : Transaction::DEBIT,
+            abs($amount),
+            'Founds added',
+            $user->id
+         );
+      });
    }
 }

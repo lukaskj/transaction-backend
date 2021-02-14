@@ -32,7 +32,7 @@ class UsersTableSeeder extends Seeder {
             $name = strpos($email, 'loja') !== false ? $faker->company : $faker->name;
             $personCompanyId = strpos($email, 'loja') !== false ? $faker->cnpj(false) : $faker->cpf(false);
             $user = $authService->register($name, $email, $personCompanyId, $password);
-            Artisan::call('user:balance', ['userId' => $user->id, 'amount' => 30000]);
+            Artisan::call('user:balance', ['userId' => $user->id, 'amount' => 300]);
          }
       }
    }

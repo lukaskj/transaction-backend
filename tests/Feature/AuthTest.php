@@ -119,15 +119,15 @@ class AuthTest extends TestCase {
          'data' => [
             'name',
             'email',
-            'person_company_id'
+            'person_company_id',
          ],
       ]);
 
       $response->assertJson([
          'status' => 'ok',
          'data' => [
-            'email' => 'cliente1@clientes.com'
-         ]
+            'email' => 'cliente1@clientes.com',
+         ],
       ]);
 
    }

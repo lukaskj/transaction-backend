@@ -8,7 +8,7 @@ use App\Services\TransactionService;
 class TransactionController extends Controller {
    public function makeTransaction(TransactionRequest $request) {
       $transaction = (new TransactionService)
-         ->newTransaction(
+         ->newPayment(
             $request->payer,
             $request->payee,
             $request->value

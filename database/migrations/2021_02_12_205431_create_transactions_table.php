@@ -15,9 +15,9 @@ class CreateTransactionsTable extends Migration {
          $table->id();
          $table->unsignedInteger('transaction_type_id')->nullable(false);
          $table->unsignedBigInteger('amount')->nullable(false)->comment('Integer rather than float due to float round errors.');
-         $table->string('description', 500)->nullable()->comment('Transaction description');
          $table->unsignedBigInteger('user_id')->nullable(false)->comment('Transaction main user. On tranfers between users he is the \'from\' user.');
          $table->unsignedBigInteger('user_id_ref')->nullable(true)->comment('Transaction \'to\' user.');
+         $table->string('description', 500)->nullable()->comment('Transaction description');
          $table->unsignedBigInteger('transaction_id_ref')->nullable(true)->comment('Transaction reference ID.');
          $table->unsignedTinyInteger('status')->default(1)->comment('Transaction status');
 

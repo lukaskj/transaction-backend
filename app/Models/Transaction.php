@@ -6,12 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Transaction extends Model {
+   public const CREDIT = 1;
+   public const DEBIT = 2;
+
    protected $fillable = [
       'transaction_type_id',
       'amount',
       'description',
       'user_id',
-      'user_id_to',
+      'user_id_ref',
+      'transaction_id_ref',
       'status',
    ];
 

@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\User;
+use App\Services\TransactionService;
 use Illuminate\Console\Command;
 
 class UserBalance extends Command {
@@ -36,19 +37,19 @@ class UserBalance extends Command {
     */
    public function handle() {
       $user = User::find($this->argument('userId'));
-      $amount = (int) $this->argument('amount');
+      $amount = $this->argument('amount');
 
       if ($user === null) {
          $this->error("User not found");
          return 1;
       }
 
-      if ($amount < 0) {
-         $this->error("Amount must be positive.");
+      if ($amount == 0) {
+         $this->error("Amount must have a value.");
          return 1;
       }
-      $user->balance = $amount;
-      $user->update();
+
+      (new TransactionService)->addFounds($user->id, $amount);
       return 0;
    }
 }
