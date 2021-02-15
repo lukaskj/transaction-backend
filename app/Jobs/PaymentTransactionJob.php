@@ -20,6 +20,9 @@ class PaymentTransactionJob implements ShouldQueue {
    private TransactionService $transactionService;
    private UserService $userService;
 
+   // public $timeout = 5;
+   public $tries = 1;
+
    /**
     * Create a new job instance.
     *
@@ -53,12 +56,13 @@ class PaymentTransactionJob implements ShouldQueue {
     * @return void
     */
    public function handle() {
+      Log::info('Job started | ' . PaymentTransactionJob::class . ' | Attempt: ' . $this->attempts());
       try {
          DB::beginTransaction();
          $payer = $this->transaction->user;
          $payee = $this->transaction->user_ref;
          $amount = $this->transaction->amount;
-         
+
          $payeeCreditTransaction = $this->transactionService->addTransaction(
             Transaction::CREDIT,
             $amount,
@@ -69,22 +73,18 @@ class PaymentTransactionJob implements ShouldQueue {
             Transaction::STATUS_CONFIRMED
          );
 
-
          $this->userService->updateBalance($payee->id, $payee->balance += $amount);
 
          $this->transaction->status = Transaction::STATUS_CONFIRMED;
          $this->transaction->update();
-         
+
          DB::commit();
       } catch (\Throwable $th) {
+         report($th);
          DB::rollBack();
-         throw $th;
+      } finally {
+         Log::info('Job ended | ' . PaymentTransactionJob::class . ' | Attempt: ' . $this->attempts());
       }
-
-      Log::info("AAAAAAAAAAAAAAAAAAAAAA");
-      Log::info("AAAAAAAAAAAAAAAAAAAAAA");
-      Log::info($this->transaction->id);
-      Log::info("AAAAAAAAAAAAAAAAAAAAAA");
-      Log::info("AAAAAAAAAAAAAAAAAAAAAA");
    }
+
 }
