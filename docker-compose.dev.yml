@@ -35,10 +35,51 @@ services:
       SERVICE_TAGS: dev
     volumes:
       - ./:/var/www
-    command: sh -c "/opt/wait-for-it.sh transaction-mysql:3306 -t 60 -- php artisan migrate --seed --force && php-fpm"
+    command: sh -c "/opt/wait-for-it.sh transaction-mysql:3306 -t 60 -- php artisan cache:clear && php artisan config:cache && php artisan migrate --seed --force && php-fpm"
     depends_on:
       - transaction-mysql
       - transaction-redis
+
+  transaction-queue:
+    image: lukaskj/laravel-docker:7.4-fpm
+    container_name: transaction-queue
+    environment:
+      APP_NAME: TransactionQueue
+      APP_ENV: production
+      APP_KEY: base64:JDKwEXsMHMr3JL15GpNEOKKlX5SlIwxOaSA8UmBPtoE=
+      APP_DEBUG: 'false'
+      APP_URL: http://transaction-app
+
+      # Database
+      DB_CONNECTION: mysql
+      DB_HOST: transaction-mysql
+      DB_DATABASE: transactions
+      DB_PORT: 3306
+      DB_USERNAME: root
+      DB_PASSWORD: 9ca80cbce084b692e0b78adf4dc3f6b8883221d1fd59c86162c6f97bf4b75b8e
+
+      # redis
+      REDIS_HOST: transaction-redis
+      REDIS_PASSWORD: e77cd03bbd00bb6f87cbb593e565bcaace9fc9970210c6e747eadeab90c7950d
+      REDIS_PORT: 6379
+
+      CACHE_DRIVER: redis
+      QUEUE_CONNECTION: redis
+      SESSION_DRIVER: redis
+      # Other
+      LOG_CHANNEL: stack
+      LOG_LEVEL: debug
+      TOKEN_VALID_AMOUNT: 10
+      TOKEN_VALID_METRIC: days
+      SERVICE_NAME: transaction-queue
+      SERVICE_TAGS: dev
+    volumes:
+      - ./:/var/www
+    command: sh -c "/opt/wait-for-it.sh transaction-mysql:3306 -t 60 -- php artisan cache:clear && php artisan config:cache && php artisan queue:work"
+    depends_on:
+      - transaction-mysql
+      - transaction-redis
+      - transaction-app
       
   transaction-nginx:
     image: nginx:1.19-alpine
