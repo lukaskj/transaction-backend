@@ -3,13 +3,13 @@
 namespace App\Exceptions;
 
 use Exception;
-use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
 
 /**
  * Class ReportableException.
  */
-class ReportableException extends HttpException {
+class ReportableException extends \RuntimeException implements HttpExceptionInterface {
    /**
     * @var
     */
@@ -25,7 +25,8 @@ class ReportableException extends HttpException {
     * @param Throwable|null $previous
     */
    public function __construct(string $message = '', $data = null, int $code = 500, Throwable $previous = null) {
-      parent::__construct($code, $message, null, [], $code);
+      // parent::__construct($code, $message, null, [], $code);
+      parent::__construct($message, $code, $previous);
       $this->data = $data;
    }
 
@@ -33,7 +34,15 @@ class ReportableException extends HttpException {
       return $this->data;
    }
 
+   public function getStatusCode() {
+      return $this->getCode();
+   }
+
+   public function getHeaders() {
+      return [];
+   }
+
    public static function from(Throwable $e) {
-      return new ReportableException($e->getMessage(), null, (int)$e->getCode() ?: 500, null);
+      return new ReportableException($e->getMessage(), null, (int) $e->getCode() ?: 500, null);
    }
 }

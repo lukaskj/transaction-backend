@@ -15,6 +15,8 @@ return [
 
     'default' => env('QUEUE_CONNECTION', 'sync'),
 
+    'job_retry_seconds' => env('JOB_RETRY_SECONDS', 10),
+
     /*
     |--------------------------------------------------------------------------
     | Queue Connections
