@@ -172,6 +172,9 @@ class TransactionService {
       try {
          DB::beginTransaction();
 
+         // External payment authorization service call
+         PaymentAuthorizerService::authorize($transaction);
+
          // Add payee credit record
          $payeeCreditTransaction = $this->addTransaction(
             Transaction::CREDIT,
