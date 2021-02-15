@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Exceptions\ReportableException;
+use App\Jobs\NotificationJob;
 use App\Jobs\PaymentTransactionJob;
 use App\Models\Transaction;
 use App\Models\User;
@@ -193,6 +194,7 @@ class TransactionService {
          $transaction->status = Transaction::STATUS_CONFIRMED;
          $transaction->update();
          DB::commit();
+         NotificationJob::dispatch($payee, "Payment received.");
          return $payeeCreditTransaction;
       } catch (\Throwable $th) {
          $errorMessage = "Refunded payment by internal error.";

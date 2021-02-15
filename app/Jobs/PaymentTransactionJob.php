@@ -20,7 +20,7 @@ class PaymentTransactionJob implements ShouldQueue {
    private UserService $userService;
 
    // public $timeout = 5;
-   public $tries = 1;
+   // public $tries = 1;
 
    /**
     * Create a new job instance.
