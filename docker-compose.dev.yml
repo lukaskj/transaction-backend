@@ -7,7 +7,7 @@ services:
     container_name: transaction-app
     environment:
       APP_NAME: TransactionBackend
-      APP_ENV: production
+      APP_ENV: local
       APP_KEY: base64:JDKwEXsMHMr3JL15GpNEOKKlX5SlIwxOaSA8UmBPtoE=
       APP_DEBUG: 'false'
       APP_URL: http://transaction-app

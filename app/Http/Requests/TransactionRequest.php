@@ -13,7 +13,8 @@ class TransactionRequest extends AbstractRequest {
    public function rules() {
       return [
          'value' => ['required', 'numeric', 'min:0'],
-         'payer' => ['required', new LoggedUserAsPayer], // Strange input. The payer must be the logged in user. Unless another service later do the transactions.
+         // 'payer' => ['required', new LoggedUserAsPayer],
+         'payer' => ['required', 'exists:users,id'],
          'payee' => ['required', 'exists:users,id'],
       ];
    }
@@ -25,6 +26,7 @@ class TransactionRequest extends AbstractRequest {
     */
    public function messages() {
       return [
+         'payer.exists' => 'Payer not found.',
          'payee.exists' => 'Payee not found.'
       ];
    }

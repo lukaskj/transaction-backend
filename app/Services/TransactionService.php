@@ -162,6 +162,7 @@ class TransactionService {
     * Transaction method called from queue.
     * It checks for external payment authorizer and credit payee the transction amount on success
     * and rollback payer amount on error.
+    * 
     * @param Transaction $transaction Payer transaction record
     * @return Transaction Payee transaction
     * @throws Exception
