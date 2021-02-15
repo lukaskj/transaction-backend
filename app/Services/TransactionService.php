@@ -156,4 +156,67 @@ class TransactionService {
          );
       });
    }
+
+   /**
+    * Transaction method called from queue.
+    * It checks for external payment authorizer and credit payee the transction amount on success
+    * and rollback payer amount on error.
+    * @param Transaction $transaction Payer transaction record
+    * @return Transaction Payee transaction
+    * @throws Exception
+    */
+   public function transactionJob(Transaction $transaction): Transaction {
+      $payer = $transaction->user;
+      $payee = $transaction->user_ref;
+      $amount = $transaction->amount;
+      try {
+         DB::beginTransaction();
+
+         // Add payee credit record
+         $payeeCreditTransaction = $this->addTransaction(
+            Transaction::CREDIT,
+            $amount,
+            'Payment received',
+            $payee->id,
+            $payer->id,
+            $transaction->id,
+            Transaction::STATUS_CONFIRMED
+         );
+
+         // Update payee balance
+         $this->userService->updateBalance($payee->id, $payee->balance += $amount);
+
+         // Update payer transaction to confirmed
+         $transaction->status = Transaction::STATUS_CONFIRMED;
+         $transaction->update();
+         DB::commit();
+         return $payeeCreditTransaction;
+      } catch (\Throwable $th) {
+         $errorMessage = "Refunded payment by internal error.";
+         if($th instanceof ReportableException) {
+            $errorMessage = $th->getMessage();
+         }
+         DB::rollBack();
+         report($th);
+
+         // Rollback payer transaction
+         if ($transaction->status === Transaction::STATUS_PENDING) {
+            $transaction->status = Transaction::STATUS_ERROR;
+            $transaction->error = $errorMessage;
+            $transaction->update();
+            $this->userService->updateBalance($payer->id, $payer->balance += $amount);
+         }
+
+         // Rollback payee transaction if existent
+         $transactionRefPayee = Transaction::where('transaction_id_ref', $transaction->id)->first();
+         if ($transactionRefPayee !== null) {
+            $transactionRefPayee->status = Transaction::STATUS_ERROR;
+            $transactionRefPayee->error = "Refunded payment by internal error";
+            $transactionRefPayee->update();
+            $this->userService->updateBalance($payee->id, $payee->balance -= $amount);
+         }
+         
+         throw $th;
+      }
+   }
 }

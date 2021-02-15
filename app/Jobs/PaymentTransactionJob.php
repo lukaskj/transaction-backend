@@ -10,7 +10,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class PaymentTransactionJob implements ShouldQueue {
@@ -57,34 +56,8 @@ class PaymentTransactionJob implements ShouldQueue {
     */
    public function handle() {
       Log::info('Job started | ' . PaymentTransactionJob::class . ' | Attempt: ' . $this->attempts());
-      try {
-         DB::beginTransaction();
-         $payer = $this->transaction->user;
-         $payee = $this->transaction->user_ref;
-         $amount = $this->transaction->amount;
-
-         $payeeCreditTransaction = $this->transactionService->addTransaction(
-            Transaction::CREDIT,
-            $amount,
-            'Payment received',
-            $payee->id,
-            $payer->id,
-            $this->transaction->id,
-            Transaction::STATUS_CONFIRMED
-         );
-
-         $this->userService->updateBalance($payee->id, $payee->balance += $amount);
-
-         $this->transaction->status = Transaction::STATUS_CONFIRMED;
-         $this->transaction->update();
-
-         DB::commit();
-      } catch (\Throwable $th) {
-         report($th);
-         DB::rollBack();
-      } finally {
-         Log::info('Job ended | ' . PaymentTransactionJob::class . ' | Attempt: ' . $this->attempts());
-      }
+      $this->transactionService->transactionJob($this->transaction);
+      Log::info('Job ended | ' . PaymentTransactionJob::class . ' | Attempt: ' . $this->attempts());
    }
 
 }
