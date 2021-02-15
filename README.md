@@ -4,7 +4,12 @@
 ```
 $ docker-compose up --build
 ```
-### Dev (Slow on WSL2):
+- Dev mode with mounted directories (Slow on WSL2):
 ```
 $ docker-compose -f docker-compose.dev.yml up
+```
+
+## Testing
+```
+$ php artisan test
 ```
