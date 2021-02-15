@@ -44,7 +44,7 @@ services:
       - transaction-app
   
   transaction-mysql:
-    image: mysql/mysql-server:8.0.23
+    image: mysql:5.7
     container_name: transaction-mysql
     environment:
       MYSQL_ROOT_HOST: '%'
