@@ -6,5 +6,5 @@ COPY ./ /var/www/
 
 WORKDIR /var/www/
 
-RUN [ "composer", "install" ]
+RUN dos2unix /var/www/docker/scripts/*.sh && composer install
 
