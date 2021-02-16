@@ -9,7 +9,7 @@ services:
       APP_NAME: TransactionBackend
       APP_ENV: local
       APP_KEY: base64:JDKwEXsMHMr3JL15GpNEOKKlX5SlIwxOaSA8UmBPtoE=
-      APP_DEBUG: 'false'
+      APP_DEBUG: 'true'
       APP_URL: http://transaction-app
       # Database
       DB_CONNECTION: mysql
@@ -45,9 +45,9 @@ services:
     container_name: transaction-queue
     environment:
       APP_NAME: TransactionQueue
-      APP_ENV: production
+      APP_ENV: local
       APP_KEY: base64:JDKwEXsMHMr3JL15GpNEOKKlX5SlIwxOaSA8UmBPtoE=
-      APP_DEBUG: 'false'
+      APP_DEBUG: 'true'
       APP_URL: http://transaction-app
 
       # Database
@@ -97,7 +97,7 @@ services:
       - transaction-app
   
   transaction-mysql:
-    image: mysql:5.7
+    image: mysql/mysql-server:8.0.23
     container_name: transaction-mysql
     environment:
       MYSQL_ROOT_HOST: '%'

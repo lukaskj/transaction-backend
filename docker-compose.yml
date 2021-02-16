@@ -1,7 +1,5 @@
 version: '3.7'
 services:
-  # Accessing source code mounted on windows filesystem (/mnt) is slow on WSL2
-  # Later build an image without mounting this way
   transaction-app:
     image: transaction-app:php-image
     build:
@@ -11,7 +9,7 @@ services:
     environment:
       SERVICE_NAME: transaction-app
       SERVICE_TAGS: dev
-    command: sh -c "/var/www/docker/scripts/start-app.sh"
+    command: [ "bash", "/var/www/docker/scripts/start-app.sh" ]
     depends_on:
       - transaction-mysql
       - transaction-redis
@@ -22,7 +20,7 @@ services:
     environment:
       SERVICE_NAME: transaction-queue
       SERVICE_TAGS: dev
-    command: sh -c "/var/www/docker/scripts/start-job.sh"
+    command: [ "bash", "/var/www/docker/scripts/start-job.sh" ]
     depends_on:
       - transaction-mysql
       - transaction-redis
@@ -44,7 +42,7 @@ services:
       - transaction-app
   
   transaction-mysql:
-    image: mysql:5.7
+    image: mysql/mysql-server:8.0.23
     container_name: transaction-mysql
     environment:
       MYSQL_ROOT_HOST: '%'

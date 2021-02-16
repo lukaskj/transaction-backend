@@ -1,7 +1,5 @@
-#!/bin/sh
-
-cd $WORKDIR
-cp /var/www/docker/.env /var/www/.env
-composer install
-/opt/wait-for-it.sh transaction-mysql:3306 -t 60 -- php artisan migrate --seed --force
+#!/bin/bash
+cp /var/www/docker/.env.docker /var/www/.env
+chown www-data:www-data -R storage/
+/opt/wait-for-it.sh transaction-mysql:3306 -t 60 -- php artisan migrate --force --seed
 php-fpm

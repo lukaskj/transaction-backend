@@ -1,7 +1,10 @@
 FROM lukaskj/laravel-docker:7.4-fpm
 
-ENV WORKDIR /var/www
+ENV WORKDIR /var/www/
 
-WORKDIR /var/www
+COPY ./ /var/www/
 
-ADD ./ /var/www/
+WORKDIR /var/www/
+
+RUN [ "composer", "install" ]
+
