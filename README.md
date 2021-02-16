@@ -18,9 +18,9 @@ $ docker-compose -f docker-compose.dev.yml up
 ### - Local (without Docker):
 First rename .env.example to .env and then run the following commands:
 ```bash
-$ php artisan migrat$ composer install
+$ composer install
 
-e --seed
+$ php artisan migrate --seed
 
 # first process
 $ php artisan serve
