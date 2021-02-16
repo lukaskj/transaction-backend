@@ -29,7 +29,7 @@ $ php artisan serve
 $ php artisan queue:work
 ```
 
-### **The API will be up on address `http://localhost:3000`**
+### **The API will be up on address `http://localhost:8000`**
 <br>
 
 ## Testing
