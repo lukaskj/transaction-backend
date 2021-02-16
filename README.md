@@ -10,7 +10,7 @@
 ```
 $ docker-compose up --build
 ```
-- Dev mode with mounted directories (Slow on WSL2):
+- Dev mode with mounted directories ([Slow on WSL2](https://github.com/microsoft/WSL/issues/4197#issuecomment-604592340)):
 ```
 $ docker-compose -f docker-compose.dev.yml up
 ```
