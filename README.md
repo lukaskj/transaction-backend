@@ -38,4 +38,4 @@ $ php artisan test
 ## Documentation
 * [PT-BR](https://docs.google.com/document/d/1daxXkKQ8koJ4_T-Km-NEQJxvaPK9q5x-P2VyT0tQmvk/edit)
 * EN (TODO)
-* [Fluxogram (PT-BR)](./docs/fluxograma.png)
+* [Flowchart (PT-BR)](./docs/fluxograma.png)
