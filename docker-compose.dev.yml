@@ -9,7 +9,7 @@ services:
       APP_NAME: TransactionBackend
       APP_ENV: local
       APP_KEY: base64:JDKwEXsMHMr3JL15GpNEOKKlX5SlIwxOaSA8UmBPtoE=
-      APP_DEBUG: 'true'
+      APP_DEBUG: 'false'
       APP_URL: http://transaction-app
       # Database
       DB_CONNECTION: mysql
@@ -35,6 +35,7 @@ services:
       SERVICE_TAGS: dev
     volumes:
       - ./:/var/www
+    user: "www-data:www-data"
     command: sh -c "/opt/wait-for-it.sh transaction-mysql:3306 -t 60 -- php artisan cache:clear && php artisan config:cache && php artisan migrate --seed --force && php-fpm"
     depends_on:
       - transaction-mysql
@@ -47,7 +48,7 @@ services:
       APP_NAME: TransactionQueue
       APP_ENV: local
       APP_KEY: base64:JDKwEXsMHMr3JL15GpNEOKKlX5SlIwxOaSA8UmBPtoE=
-      APP_DEBUG: 'true'
+      APP_DEBUG: 'false'
       APP_URL: http://transaction-app
 
       # Database
@@ -75,6 +76,7 @@ services:
       SERVICE_TAGS: dev
     volumes:
       - ./:/var/www
+    user: "www-data:www-data"
     command: sh -c "/opt/wait-for-it.sh transaction-mysql:3306 -t 60 -- php artisan cache:clear && php artisan config:cache && php artisan queue:work"
     depends_on:
       - transaction-mysql
