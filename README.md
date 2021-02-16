@@ -1,7 +1,7 @@
 # Transaction Backend
 ## Dependencies
-- Docker
-- `or`
+- Docker for complete environment\
+`or`
 - PHP 7.3+
 - Composer
 - [Any Laravel supported databases](https://laravel.com/docs/8.x/database#introduction)
