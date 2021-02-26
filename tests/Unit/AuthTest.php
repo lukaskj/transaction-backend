@@ -11,11 +11,16 @@ class AuthTest extends TestCase
     /**
      * @var AuthService
      */
-    private $authService;
+    private AuthService $authService;
+
+    public function setUp():void {
+        parent::setUp();
+        $this->authService = app(AuthService::class);
+    }
 
     public function testBasicLogin()
     {
-        $userToken = (new AuthService())->login('loja1@lojas.com', '123456');
+        $userToken = $this->authService->login('loja1@lojas.com', '123456');
         $this->assertNotNull($userToken);
         $this->assertIsObject($userToken);
         $this->assertNotNull($userToken->token);
@@ -25,7 +30,7 @@ class AuthTest extends TestCase
     public function testFailedRegistration()
     {
         $this->expectException(ReportableException::class);
-        $user = (new AuthService())->register(
+        $user = $this->authService->register(
             'User Name Test',
             'usertest@test.com',
             '12345678911',
@@ -35,7 +40,7 @@ class AuthTest extends TestCase
 
     public function testBasicRegistration()
     {
-        $user = (new AuthService())->register(
+        $user = $this->authService->register(
             'User Name Test',
             'usertest@test.com',
             '08888758003',

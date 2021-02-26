@@ -10,6 +10,13 @@ use Tests\TestCase;
 
 class TransactionTest extends TestCase
 {
+    private TransactionService $service;
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->service = app(TransactionService::class);
+    }
+
     public function testIfTransactionTypesExists()
     {
         $credit = TransactionType::query()->find(1);
@@ -21,34 +28,29 @@ class TransactionTest extends TestCase
 
     public function testIfStoreCannotPay()
     {
-        $service = new TransactionService();
-
         $storeUser = User::query()
          ->where('account_type', 2)
          ->where('balance', '>', 0)->first();
 
-        $canPay = $service->userCanPay($storeUser, 1, false);
+        $canPay = $this->service->userCanPay($storeUser, 1, false);
         $this->assertEquals(false, $canPay);
     }
 
     public function testIfClientCanPay()
     {
-        $service = new TransactionService();
-
         $user = User::query()
          ->where('account_type', 1)
          ->where('balance', '>', 0)->first();
 
-        $canPayOverBalance = $service->userCanPay($user, $user->balance + 1000, false);
+        $canPayOverBalance = $this->service->userCanPay($user, $user->balance + 1000, false);
         $this->assertEquals(false, $canPayOverBalance);
 
-        $canPay = $service->userCanPay($user, $user->balance - 10, false);
+        $canPay = $this->service->userCanPay($user, $user->balance - 10, false);
         $this->assertEquals(true, $canPay);
     }
 
     public function testInvalidTransactionPayment()
     {
-        $service = new TransactionService();
         $user1 = User::query()
          ->where('account_type', 1)
          ->where('balance', '>', 0)->first();
@@ -56,12 +58,11 @@ class TransactionTest extends TestCase
         $amount = 5073;
 
         $this->expectException(ReportableException::class);
-        $service->newPayment($user1->id, $user1->id, $amount);
+        $this->service->newPayment($user1->id, $user1->id, $amount);
     }
 
     public function testValidTransactionPayment()
     {
-        $service = new TransactionService();
         $user1 = User::query()
          ->where('account_type', 1)
          ->where('balance', '>', 0)->first();
@@ -75,7 +76,7 @@ class TransactionTest extends TestCase
 
         $amount = 56;
 
-        $service->newPayment($user1->id, $user2->id, $amount);
+        $this->service->newPayment($user1->id, $user2->id, $amount);
 
         $user1 = User::query()->find($user1->id);
         $user2 = User::query()->find($user2->id);
@@ -86,13 +87,12 @@ class TransactionTest extends TestCase
 
     public function testAddFounds()
     {
-        $service = new TransactionService();
         $user = User::query()
          ->where('account_type', 1)
          ->where('balance', '>', 0)->first();
         $userInitialBalance = $user->balance;
         $amount = 150.71;
-        $transaction = $service->addFounds($user->id, $amount);
+        $transaction = $this->service->addFounds($user->id, $amount);
         $this->assertNotNull($transaction);
         $user->refresh();
         $this->assertEquals($userInitialBalance + $amount, $user->balance);
