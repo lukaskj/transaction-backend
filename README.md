@@ -37,6 +37,11 @@ $ php artisan queue:work
 $ php artisan test
 ```
 
+## PHP cs fixer
+```
+$ composer fix
+```
+
 ## Documentation
 * [PT-BR](./docs/Documentation-pt_BR.pdf)
 * EN (TODO)
