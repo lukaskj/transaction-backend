@@ -4,16 +4,18 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 
-class ExampleTest extends TestCase {
-   /**
-    * A basic test example.
-    *
-    * @return void
-    */
-   public function testIfAppIsUp() {
-      $response = $this->get('/oapi/v1/status');
+class ExampleTest extends TestCase
+{
+    /**
+     * A basic test example.
+     *
+     * @return void
+     */
+    public function testIfAppIsUp()
+    {
+        $response = $this->get('/oapi/v1/status');
 
-      $response
+        $response
          ->assertStatus(200)
          ->assertJsonStructure([
             'status',
@@ -21,5 +23,5 @@ class ExampleTest extends TestCase {
          ->assertJson([
             'status' => 'ok',
          ]);
-   }
+    }
 }

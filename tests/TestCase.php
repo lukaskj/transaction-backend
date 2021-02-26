@@ -6,11 +6,14 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Artisan;
 
-abstract class TestCase extends BaseTestCase {
-   use CreatesApplication, DatabaseMigrations;
+abstract class TestCase extends BaseTestCase
+{
+    use CreatesApplication;
+    use DatabaseMigrations;
 
-   protected function setUp(): void {
-      parent::setUp();
-      Artisan::call('db:seed');
-   }
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Artisan::call('db:seed');
+    }
 }

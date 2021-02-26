@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TransactionType extends Model {
-   protected $fillable = [
+class TransactionType extends Model
+{
+    protected $fillable = [
       'id',
       'description',
       'multiplier',

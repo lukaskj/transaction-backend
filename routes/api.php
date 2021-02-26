@@ -21,23 +21,23 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::prefix('oapi/v1')->group(function () {
-   Route::get('/status', function (Request $request) {
-      return response()->success();
-   });
+    Route::get('/status', function (Request $request) {
+        return response()->success();
+    });
 
-   Route::post('/login', [AuthController::class, 'login']);
-   Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register', [AuthController::class, 'register']);
 });
 
 Route::prefix('api/v1')->middleware('auth:api')->group(function () {
-   Route::get('/me', function (Request $request) {
-      return response()->success($request->user());
-   });
+    Route::get('/me', function (Request $request) {
+        return response()->success($request->user());
+    });
 
-   Route::get('/transaction', [TransactionController::class, 'getTransactionList']);
-   Route::post('/transaction', [TransactionController::class, 'makeAuthTransaction']);
+    Route::get('/transaction', [TransactionController::class, 'getTransactionList']);
+    Route::post('/transaction', [TransactionController::class, 'makeAuthTransaction']);
 });
 
 Route::prefix('/transaction')->group(function () {
-   Route::post('/', [TransactionController::class, 'makeTransaction']);
+    Route::post('/', [TransactionController::class, 'makeTransaction']);
 });

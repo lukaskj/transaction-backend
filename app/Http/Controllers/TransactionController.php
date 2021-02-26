@@ -7,28 +7,32 @@ use App\Http\Requests\TransactionRequest;
 use App\Models\Transaction;
 use App\Services\TransactionService;
 
-class TransactionController extends Controller {
-   public function makeAuthTransaction(AuthTransactionRequest $request) {
-      $transaction = (new TransactionService)
+class TransactionController extends Controller
+{
+    public function makeAuthTransaction(AuthTransactionRequest $request)
+    {
+        $transaction = (new TransactionService())
          ->newPayment(
-            $request->payer,
-            $request->payee,
-            $request->value
+             $request->payer,
+             $request->payee,
+             $request->value
          );
-      return response()->success($transaction);
-   }
+        return response()->success($transaction);
+    }
 
-   public function makeTransaction(TransactionRequest $request) {
-      $transaction = (new TransactionService)
+    public function makeTransaction(TransactionRequest $request)
+    {
+        $transaction = (new TransactionService())
          ->newPayment(
-            $request->payer,
-            $request->payee,
-            $request->value
+             $request->payer,
+             $request->payee,
+             $request->value
          );
-      return response()->success($transaction);
-   }
+        return response()->success($transaction);
+    }
 
-   public function getTransactionList() {
-      return response()->success(Transaction::fromUser(auth()->user()->id)->get());
-   }
+    public function getTransactionList()
+    {
+        return response()->success(Transaction::fromUser(auth()->user()->id)->get());
+    }
 }

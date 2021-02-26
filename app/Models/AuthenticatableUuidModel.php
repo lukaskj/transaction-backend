@@ -13,6 +13,10 @@ use Illuminate\Foundation\Auth\Access\Authorizable;
 class AuthenticatableUuidModel extends AbstractUuidModel implements
 AuthenticatableContract,
 AuthorizableContract,
-CanResetPasswordContract {
-   use Authenticatable, Authorizable, CanResetPassword, MustVerifyEmail;
+CanResetPasswordContract
+{
+    use Authenticatable;
+    use Authorizable;
+    use CanResetPassword;
+    use MustVerifyEmail;
 }

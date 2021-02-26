@@ -9,12 +9,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-class UserToken extends AbstractUuidModel {
-   use SoftDeletes;
+class UserToken extends AbstractUuidModel
+{
+    use SoftDeletes;
 
-   protected $table = "user_token";
+    protected $table = "user_token";
 
-   protected $fillable = [
+    protected $fillable = [
       "token",
       "expire_date",
       "user_agent",
@@ -22,27 +23,29 @@ class UserToken extends AbstractUuidModel {
       "user_id",
    ];
 
-   protected $hidden = [
+    protected $hidden = [
       "ip",
       "user_agent",
       'deleted_at',
    ];
 
-   protected $casts = [
+    protected $casts = [
       "expire_date" => "datetime"
    ];
 
-   protected static function boot() {
-      parent::boot();
-      static::creating(function (Model $model) {
-         $model->setAttribute('expire_date', Carbon::now()->add(config('token.valid_amount'), config('token.valid_metric')));
-         $model->setAttribute('user_agent', request()->server('HTTP_USER_AGENT'));
-         $model->setAttribute('ip', request()->ip());
-         $model->setAttribute('token', base64_encode(Hash::make(Str::random(16) . Carbon::now())));
-      });
-   }
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function (Model $model) {
+            $model->setAttribute('expire_date', Carbon::now()->add(config('token.valid_amount'), config('token.valid_metric')));
+            $model->setAttribute('user_agent', request()->server('HTTP_USER_AGENT'));
+            $model->setAttribute('ip', request()->ip());
+            $model->setAttribute('token', base64_encode(Hash::make(Str::random(16) . Carbon::now())));
+        });
+    }
 
-   public function user() {
-      return $this->belongsTo(User::class);
-   }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
