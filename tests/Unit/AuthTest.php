@@ -13,7 +13,8 @@ class AuthTest extends TestCase
      */
     private AuthService $authService;
 
-    public function setUp():void {
+    public function setUp(): void
+    {
         parent::setUp();
         $this->authService = app(AuthService::class);
     }
