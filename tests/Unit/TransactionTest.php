@@ -13,8 +13,7 @@ class TransactionTest extends TestCase {
    public function testIfTransactionTypesExists() {
       $credit = TransactionType::query()->find(1);
       $debit = TransactionType::query()->find(2);
-      $this->assertNotNull($credit);
-      $this->assertNotNull($debit);
+      
       $this->assertEquals(1, $credit->multiplier);
       $this->assertEquals(-1, $debit->multiplier);
    }
@@ -25,7 +24,6 @@ class TransactionTest extends TestCase {
       $storeUser = User::query()
          ->where('account_type', 2)
          ->where('balance', '>', 0)->first();
-      $this->assertNotNull($storeUser);
 
       $canPay = $service->userCanPay($storeUser, 1, false);
       $this->assertEquals(false, $canPay);
@@ -37,7 +35,6 @@ class TransactionTest extends TestCase {
       $user = User::query()
          ->where('account_type', 1)
          ->where('balance', '>', 0)->first();
-      $this->assertNotNull($user);
 
       $canPayOverBalance = $service->userCanPay($user, $user->balance + 1000, false);
       $this->assertEquals(false, $canPayOverBalance);
