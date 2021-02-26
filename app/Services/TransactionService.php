@@ -15,7 +15,7 @@ class TransactionService
 
     public function __construct()
     {
-        $this->userService = new UserService();
+        $this->userService = app(UserService::class);
     }
     /**
      * Add transaction record

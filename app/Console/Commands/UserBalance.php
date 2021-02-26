@@ -39,6 +39,7 @@ class UserBalance extends Command
      */
     public function handle()
     {
+        $service = app(TransactionService::class);
         $user = User::find($this->argument('userId'));
         $amount = $this->argument('amount');
 
@@ -52,7 +53,7 @@ class UserBalance extends Command
             return 1;
         }
 
-        (new TransactionService())->addFounds($user->id, $amount);
+        $service->addFounds($user->id, $amount);
         return 0;
     }
 }

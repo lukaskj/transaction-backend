@@ -9,15 +9,15 @@ use App\Services\AuthService;
 
 class AuthController extends Controller
 {
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request, AuthService $authService)
     {
-        $userToken = (new AuthService())->login($request->email, $request->password);
+        $userToken = $authService->login($request->email, $request->password);
         return response()->success(UserTokenResource::make($userToken));
     }
 
-    public function register(RegisterRequest $request)
+    public function register(RegisterRequest $request, AuthService $authService)
     {
-        $user = (new AuthService())->register(
+        $user = $authService->register(
             $request->name,
             $request->email,
             $request->person_company_id,

@@ -17,7 +17,7 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        $authService = new AuthService();
+        $authService = app(AuthService::class);
         $faker = Factory::create('pt_BR');
 
         $password = '123456';

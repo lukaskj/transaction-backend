@@ -34,8 +34,8 @@ class PaymentTransactionJob implements ShouldQueue
     public function __construct(Transaction $transaction)
     {
         $this->transaction = $transaction;
-        $this->transactionService = new TransactionService();
-        $this->userService = new UserService();
+        $this->transactionService = app(TransactionService::class);
+        $this->userService = app(UserService::class);
     }
 
     /**

@@ -9,9 +9,9 @@ use App\Services\TransactionService;
 
 class TransactionController extends Controller
 {
-    public function makeAuthTransaction(AuthTransactionRequest $request)
+    public function makeAuthTransaction(AuthTransactionRequest $request, TransactionService $service)
     {
-        $transaction = (new TransactionService())
+        $transaction = $service
          ->newPayment(
              $request->payer,
              $request->payee,
@@ -20,9 +20,9 @@ class TransactionController extends Controller
         return response()->success($transaction);
     }
 
-    public function makeTransaction(TransactionRequest $request)
+    public function makeTransaction(TransactionRequest $request, TransactionService $service)
     {
-        $transaction = (new TransactionService())
+        $transaction = $service
          ->newPayment(
              $request->payer,
              $request->payee,
